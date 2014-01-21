@@ -81,7 +81,7 @@ void position_listener(const sensor_msgs::JointState::ConstPtr& msg)
 youbot_joy_teleop::youbot_joy_teleop()
 {
   // create the ROS topics
-  cmd_vel = node.advertise < geometry_msgs::Twist > ("cmd_vel", 10);
+  //cmd_vel = node.advertise < geometry_msgs::Twist > ("cmd_vel", 10);
   joy_sub = node.subscribe < sensor_msgs::Joy > ("joy", 10, &youbot_joy_teleop::joy_cback, this);
   armPositionsPublisher = node.advertise<brics_actuator::JointPositions > ("arm_1/arm_controller/position_command", 1);
   gripperPositionPublisher = node.advertise<brics_actuator::JointPositions > ("arm_1/gripper_controller/position_command", 1);
@@ -115,7 +115,7 @@ void youbot_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.angular.y = 0;
   twist.angular.z = joy->axes.at(2);
   // send the twist command
-  cmd_vel.publish(twist);
+  //cmd_vel.publish(twist);
 
   //Joint 0 Cross up/down
   if(joy->axes.at(7) > 0) {
@@ -229,7 +229,7 @@ void youbot_joy_teleop::joy_check()
     if( (receivedmsg) && ( (ros::Time::now().toSec() - T.toSec() ) > .15) )
     {
         geometry_msgs::Twist zero;
-        cmd_vel.publish(zero);
+        //cmd_vel.publish(zero);
     }
 }
 
