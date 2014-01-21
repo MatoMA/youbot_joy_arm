@@ -43,6 +43,7 @@ ros::Time T;
 bool receivedmsg = false;
 
 double joint[5];
+double currentJoint[5];                
 double lastJoint[5];                
 double gripperr = 0;
 double gripperl = 0;
@@ -53,7 +54,7 @@ double gripperMax = 0.0115;
 double gripperMin = 0;
 
 double jointDelta[5];
-double gripperDelta = (gripperMax - gripperMin) * 0.02;        
+double gripperDelta = (gripperMax - gripperMin) * 0.01;        
 
 double jointHome[] = {0.01007,0.01007,-0.15709,0.02214,0.1107};
 double jointCamera[] = {3.0,0.5,-0.9,0.1,3.0};
@@ -65,7 +66,7 @@ using namespace std;
 
 void position_listener(const sensor_msgs::JointState::ConstPtr& msg)
 {
-    if(msg->name[0] == "arm_joint_1")
+    if(msg->name[0] == "arm_joint_1" && !receivedmsg)
     {
         joint[0] = msg->position[0];
         joint[1] = msg->position[1];
@@ -156,14 +157,14 @@ void youbot_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
   }
 
   //Joint 4 LT/RT
-  if(joy->axes.at(2) < 0) {
-      joint[4] += jointDelta[4];
-      ROS_INFO("Joint4: %f", joint[4]);
-  } 
-  if(joy->axes.at(5) < 0) {
-      joint[4] -= jointDelta[4];
-      ROS_INFO("Joint4: %f", joint[4]);
-  } 
+  //if(joy->axes.at(2) < 0) {
+      //joint[4] += jointDelta[4];
+      //ROS_INFO("Joint4: %f", joint[4]);
+  //} 
+  //if(joy->axes.at(5) < 0) {
+      //joint[4] -= jointDelta[4];
+      //ROS_INFO("Joint4: %f", joint[4]);
+  //} 
 
   //Gripper LB(open)/RB(close)
   if(joy->buttons.at(4)) {
@@ -246,13 +247,13 @@ int main(int argc, char **argv)
   gripperl = 0;
   gripperr = 0;
 
-  ros::Rate rate(10); //Hz
+  ros::Rate rate(50); //Hz
   static const int numberOfArmJoints = 5;
   static const int numberOfGripperJoints = 2;
 
   for(int i = 0; i < numberOfArmJoints; i++)
   {
-      jointDelta[i] = (jointMax[i] - jointMin[i]) * 0.02;
+      jointDelta[i] = (jointMax[i] - jointMin[i]) * 0.005;
   }        
 
   ros::spinOnce();
@@ -269,7 +270,7 @@ int main(int argc, char **argv)
 
     controller.joy_check();
 
-    rate.sleep();
+    //rate.sleep();
   }
   //ros::spin();
   return 0;
